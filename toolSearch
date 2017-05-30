@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# This script will send GET requests to vital-it.ch according to a search keyword, it returns the path to load a module
+# The main idea of this script is to avoid users to leave the command line and go to the website vital-it.ch every time they want to load a software
+# Author: Adem Bilican
+# This tool is provided as is without warranty
+
+# first GET request for the search
+search=$(curl -s -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://vital-it.ch/api/index.php/tools/$1 | python -mjson.tool | grep name | cut -d "\"" -f 4)
+for i in $search
+do
+    # second GET request to return the "Module add" path for every matching results
+    results=$(curl -s -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://vital-it.ch/api/index.php/tool/$i)
+    id=${results##*installprefix}
+    subtr=${id%%,*}
+    allmost=${subtr:3}
+    final=${allmost%?}
+    # if the matching result is a tool
+    if [[ "$final" != "tatus"* && "$final" != "" ]]
+    then
+        echo "${i}: Module add ${final}"
+    fi
+done
