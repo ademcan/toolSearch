@@ -18,6 +18,6 @@ do
     # if the matching result is a tool
     if [[ "$final" != "tatus"* && "$final" != "" ]]
     then
-        echo "${i}: Module add ${final}"
+        echo "${i}: module add ${final}"
     fi
 done
